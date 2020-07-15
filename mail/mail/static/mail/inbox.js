@@ -6,8 +6,12 @@ document.addEventListener('DOMContentLoaded', function () {
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
   document.querySelector('#compose').addEventListener('click', compose_email);
 
-  // Get id of any button clicked
-  document.querySelectorAll("button")
+  // Set eventListener for all buttons to return button id
+  const buttons = document.querySelectorAll("button")
+  buttons.forEach(function (btn) {
+    btn.addEventListener("click", button_id
+    )
+  });
 
 
 
@@ -24,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 });
+// End DOMContentLoaded
 
 
 // ......................................................
@@ -71,6 +76,8 @@ function submit_email() {
     .then(result => {
       console.log(result)
     })
+
+
   load_mailbox("sent")
   return false;
 
@@ -89,7 +96,7 @@ function get_email() {
         let sender_div = document.createElement("h6");
         let body_div = document.createElement("p");
         let timestamp = document.createElement("p")
-        
+
 
         card_div.setAttribute("class", "card");
         card_body_div.setAttribute("class", "card-body")
@@ -97,14 +104,14 @@ function get_email() {
         sender_div.setAttribute("class", "card-subtitle")
         body_div.setAttribute("class", "card-text");
         timestamp.setAttribute("class", "time-stamp")
-        
+
 
         subj_div.innerHTML = emails[email].subject
         sender_div.innerHTML = emails[email].sender;
         body_div.innerHTML = emails[email].body;
         timestamp.innerHTML = emails[email].timestamp
 
-        
+
         document.querySelector("#emails-view").appendChild(card_div);
         card_div.appendChild(card_body_div);
         card_body_div.appendChild(subj_div);
@@ -112,50 +119,34 @@ function get_email() {
         card_body_div.appendChild(body_div);
         card_body_div.appendChild(timestamp);
 
+
+        // Check if email has been read (clicked)
+        card_div.addEventListener("click", function () {
+          card_div.style.backgroundColor = "Gainsboro"
+        });
+
+        // Mouseover color change on each email
+        card_div.addEventListener("mouseover", function () {
+          card_div.style.border = "#F8F8F8";
+        });
+
+        //Mouseout color change on each email
+        card_div.addEventListener("mouseout", function () {
+          card_div.style.backgroundColor = "#FFFFFF";
+        })
+
         console.log(emails[email].id);
+        button_id()
+
+
       }
     })
 
+}
 
-  fetch("emails/sent")
-    .then(response => response.json())
-    .then(emails => {
-
-      for (email in emails) {
-
-        let card_div = document.createElement("div");
-        let card_body_div = document.createElement("div");
-        let subj_div = document.createElement("h5");
-        let sender_div = document.createElement("h6");
-        let body_div = document.createElement("p");
-        let timestamp = document.createElement("p")
-        
-
-        card_div.setAttribute("class", "card");
-        card_body_div.setAttribute("class", "card-body")
-        subj_div.setAttribute("class", "card-title")
-        sender_div.setAttribute("class", "card-subtitle")
-        body_div.setAttribute("class", "card-text");
-        timestamp.setAttribute("class", "time-stamp")
-        
-
-        subj_div.innerHTML = emails[email].subject
-        sender_div.innerHTML = emails[email].sender;
-        body_div.innerHTML = emails[email].body;
-        timestamp.innerHTML = emails[email].timestamp
-
-        
-        document.querySelector("#emails-view").appendChild(card_div);
-        card_div.appendChild(card_body_div);
-        card_body_div.appendChild(subj_div);
-        card_body_div.appendChild(sender_div);
-        card_body_div.appendChild(body_div);
-        card_body_div.appendChild(timestamp);
-
-        console.log(emails[email].id);
-      }
-    })
-  console.log(email.id);
+// Return value of clicked button element
+var btn_id = function button_id() {
+  console.log(this.id)
 }
 
 
