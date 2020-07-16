@@ -6,13 +6,14 @@ document.addEventListener('DOMContentLoaded', function () {
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
   document.querySelector('#compose').addEventListener('click', compose_email);
 
-  // Set eventListener for all buttons to return button id
+  //Set eventListener for all buttons to return button id
+  /*
   const buttons = document.querySelectorAll("button")
   buttons.forEach(function (btn) {
-    btn.addEventListener("click", button_id
+     btn.addEventListener("click", btn_id
     )
-  });
-
+   });
+  */
 
 
   // By default, load the inbox
@@ -34,6 +35,7 @@ document.addEventListener('DOMContentLoaded', function () {
 // ......................................................
 // Functions
 // ......................................................
+
 
 function compose_email() {
 
@@ -77,7 +79,6 @@ function submit_email() {
       console.log(result)
     })
 
-
   load_mailbox("sent")
   return false;
 
@@ -90,64 +91,42 @@ function get_email() {
 
       for (email in emails) {
 
-        let card_div = document.createElement("div");
-        let card_body_div = document.createElement("div");
-        let subj_div = document.createElement("h5");
-        let sender_div = document.createElement("h6");
-        let body_div = document.createElement("p");
-        let timestamp = document.createElement("p")
+        let messageBox = document.createElement("div");
+        let timeStampHeader = document.createElement("span");
+        let bodyHeader = document.createElement("span");
+        let senderHeader = document.createElement("span")
+        
+        messageBox.setAttribute("class", "message-box");
+        timeStampHeader.setAttribute("class", "time-stamp-header");
+        bodyHeader.setAttribute("class", "body-header");
+        senderHeader.setAttribute("class", "sender-header");
+
+        timestamp = emails[email].timestamp
+        body = emails[email].body
+        sender = emails[email].sender
+
+        
+        timeStampHeader.append(timestamp);
+        bodyHeader.append(body);
+        senderHeader.append(sender);
+        
+        messageBox.appendChild(senderHeader);
+        messageBox.appendChild(bodyHeader);
+        messageBox.appendChild(timeStampHeader);
+        
+        document.querySelector("#emails-view").appendChild(messageBox);
 
 
-        card_div.setAttribute("class", "card");
-        card_body_div.setAttribute("class", "card-body")
-        subj_div.setAttribute("class", "card-title")
-        sender_div.setAttribute("class", "card-subtitle")
-        body_div.setAttribute("class", "card-text");
-        timestamp.setAttribute("class", "time-stamp")
 
-
-        subj_div.innerHTML = emails[email].subject
-        sender_div.innerHTML = emails[email].sender;
-        body_div.innerHTML = emails[email].body;
-        timestamp.innerHTML = emails[email].timestamp
-
-
-        document.querySelector("#emails-view").appendChild(card_div);
-        card_div.appendChild(card_body_div);
-        card_body_div.appendChild(subj_div);
-        card_body_div.appendChild(sender_div);
-        card_body_div.appendChild(body_div);
-        card_body_div.appendChild(timestamp);
-
-
-        // Check if email has been read (clicked)
-        card_div.addEventListener("click", function () {
-          card_div.style.backgroundColor = "Gainsboro"
-        });
-
-        // Mouseover color change on each email
-        card_div.addEventListener("mouseover", function () {
-          card_div.style.border = "#F8F8F8";
-        });
-
-        //Mouseout color change on each email
-        card_div.addEventListener("mouseout", function () {
-          card_div.style.backgroundColor = "#FFFFFF";
-        })
-
-        console.log(emails[email].id);
-        button_id()
-
-
+        console.log("Email id is:" + emails[email].id);
       }
     })
 
 }
 
-// Return value of clicked button element
-var btn_id = function button_id() {
-  console.log(this.id)
-}
+
+function show_email(){}
+
 
 
 
