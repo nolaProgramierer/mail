@@ -4,14 +4,19 @@ textarea {
 .time-stamp-header {
     color: lightgray;
     text-align: right;
+    position: absolute;
+    right: 5px;
 } 
 .message-box {
     border: 1px solid black;
     padding-left: 5px;
+    position: relative;
 }
 .sender-header {
     font-weight: bold;
 }
 .body-header {
-    margin-left: 15px;;
+    margin-left: 15px;
+    position: absolute;
+    left: 25%;
 }
