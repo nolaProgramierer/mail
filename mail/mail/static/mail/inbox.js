@@ -7,34 +7,35 @@ document.addEventListener('DOMContentLoaded', function () {
   document.querySelector('#compose').addEventListener('click', compose_email);
 
   // Set eventListener for all buttons to return button id
-  
+
   const buttons = document.querySelectorAll("button");
   buttons.forEach(function (btn) {
-     btn.addEventListener('click', btnId
-     )}
-   );
+    btn.addEventListener('click', btnId
+    )
+  }
+  );
 
-  
- 
- 
+
+
+
   // Submit email form
   document.querySelector("#compose-form").onsubmit = submit_email
-  
-  
+
+
   // Listener for inbox button click
   document.querySelector('#inbox').addEventListener('click', () => get_email());
 
   // Listener for sent button click
-  document.querySelector('#sent').addEventListener('click', ()  => view_sent_mail());
+  document.querySelector('#sent').addEventListener('click', () => view_sent_mail());
 
   // Listener for archive button click
-  document.querySelector('#archived').addEventListener('click', ()  => view_archive_mail());
+  document.querySelector('#archived').addEventListener('click', () => view_archive_mail());
 
-  
 
-// By default, load the inbox
-load_mailbox('inbox');
-get_email();
+
+  // By default, load the inbox
+  load_mailbox('inbox');
+  get_email();
 
 
 });
@@ -66,8 +67,8 @@ function compose_reply() {
   //document.querySelector('#compose-view').style.display = 'block';
 
   document.querySelector('#compose-recipients').value = //...
-  document.querySelector('#compose-subject').value = // 'Re plus compose_email
-  document.querySelector('#compose-body').value = '';
+    document.querySelector('#compose-subject').value = // 'Re plus compose_email
+    document.querySelector('#compose-body').value = '';
 }
 
 
@@ -86,7 +87,7 @@ function load_mailbox(mailbox) {
 // Function to retrieve form values, POST them,
 // receive response and load "sent" mailbox
 function submit_email() {
-  
+
   let recipients = document.querySelector("#compose-recipients").value;
   let subject = document.querySelector("#compose-subject").value;
   let body = document.querySelector("#compose-body").value;
@@ -104,10 +105,10 @@ function submit_email() {
       console.log(result)
     })
 
-    // Flush the input fields
-    recipients.value = "";
-    subject.value = "";
-    body.value = "";
+  // Flush the input fields
+  recipients.value = "";
+  subject.value = "";
+  body.value = "";
 
   load_mailbox("sent")
   view_sent_mail()
@@ -128,7 +129,7 @@ function get_email() {
         let timeStampHeader = document.createElement("span");
         let subjHeader = document.createElement("span");
         let senderHeader = document.createElement("span")
-        
+
         messageBox.setAttribute("class", "message-box");
         timeStampHeader.setAttribute("class", "time-stamp-header");
         subjHeader.setAttribute("class", "body-header");
@@ -137,34 +138,29 @@ function get_email() {
         timestamp = emails[email].timestamp
         subj = emails[email].subject
         sender = emails[email].sender
+        let email_id = emails[email].id
 
-        
+
         timeStampHeader.append(timestamp);
         subjHeader.append(subj);
         senderHeader.append(sender);
-        
+
         messageBox.appendChild(senderHeader);
         messageBox.appendChild(subjHeader);
         messageBox.appendChild(timeStampHeader);
 
-        messageBox.addEventListener('click', view_email)
-        
+        messageBox.addEventListener('click', () => {
+          view_email(email_id);
+        }, false);
+
         document.querySelector("#emails-view").appendChild(messageBox);
 
-        isRead(emails[email]);
- 
         console.log("Email id is:" + emails[email].id);
-        btnId
+
+
       }
     })
 
-     // Listener for email item click
-   const email_items = document.querySelectorAll('.message-box');
-   email_items.forEach(function(item) {
-     item.addEventListener('click', view_email
-     )}
-   );
-    event.preventDefault();
 }
 
 
@@ -177,12 +173,12 @@ function view_sent_mail() {
 
       for (email in emails) {
 
-        
+
         let messageBox = document.createElement("div");
         let timeStampHeader = document.createElement("span");
         let subjHeader = document.createElement("span");
         let senderHeader = document.createElement("span")
-        
+
         messageBox.setAttribute("class", "message-box");
         timeStampHeader.setAttribute("class", "time-stamp-header");
         subjHeader.setAttribute("class", "body-header");
@@ -191,26 +187,29 @@ function view_sent_mail() {
         timestamp = emails[email].timestamp
         subj = emails[email].subject
         sender = emails[email].sender
+        id = emails[email].id
 
-        
+
         timeStampHeader.append(timestamp);
         subjHeader.append(subj);
         senderHeader.append(sender);
-        
+
         messageBox.appendChild(senderHeader);
         messageBox.appendChild(subjHeader);
         messageBox.appendChild(timeStampHeader);
-        
-        document.querySelector("#emails-view").appendChild(messageBox);
-   
-          console.log("Email id is:" + emails[email].id);
-          btnId
-  
 
-      
+
+
+        document.querySelector("#emails-view").appendChild(messageBox);
+
+
+        btnId
+
+
+
       }
     })
-    event.preventDefault();
+  event.preventDefault();
 }
 
 
@@ -222,13 +221,13 @@ function view_archive_mail() {
     .then(emails => {
 
       for (email in emails) {
-        
-        
+
+
         let messageBox = document.createElement("div");
         let timeStampHeader = document.createElement("span");
         let subjHeader = document.createElement("span");
         let senderHeader = document.createElement("span")
-        
+
         messageBox.setAttribute("class", "message-box");
         timeStampHeader.setAttribute("class", "time-stamp-header");
         subjHeader.setAttribute("class", "body-header");
@@ -238,35 +237,35 @@ function view_archive_mail() {
         subj = emails[email].subject
         sender = emails[email].sender
 
-        
+
         timeStampHeader.append(timestamp);
         subjHeader.append(subj);
         senderHeader.append(sender);
-        
+
         messageBox.appendChild(senderHeader);
         messageBox.appendChild(subjHeader);
         messageBox.appendChild(timeStampHeader);
-        
+
+
+
         document.querySelector("#emails-view").appendChild(messageBox);
-        document.querySelector("#emails-view").appendChild(messageBox);
-   
+
+
         console.log("Email id is:" + emails[email].id);
         btnId
 
 
-      
+
       }
     })
-    event.preventDefault();
+  event.preventDefault();
 }
 
 
 // Function to view individual email
-function view_email() {
-  console.log("viewing email");
+function view_email(id) {
+  console.log(id);
 }
-
-
 
 
 function isRead(email) {
@@ -278,11 +277,10 @@ function isRead(email) {
 
 // Return id field of clicked button
 function btnId() {
-  this.id
   console.log("This button's id is:" + this.id);
 }
 
-//Change mouse pointer
+
 
 
 
