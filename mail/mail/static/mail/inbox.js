@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
   buttons.forEach(function (btn) {
     btn.addEventListener('click', btnId
     )
-  }
+  }, false
   );
 
 
@@ -155,6 +155,8 @@ function get_email() {
 
         document.querySelector("#emails-view").appendChild(messageBox);
 
+        
+
         console.log("Email id is:" + emails[email].id);
 
 
@@ -264,8 +266,46 @@ function view_archive_mail() {
 
 // Function to view individual email
 function view_email(id) {
-  console.log(id);
+  // Clear other mailbox views, show individual email view
+  document.querySelector('#email-view').style.display = 'block';
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'none';
+
+  // Set listener for email reply button
+  reply_button = document.querySelector('#email-reply');
+  reply_button.addEventListener('click', reply_to_email)
+
+  // Get individual email
+  fetch('/emails/' + id)
+  .then(response => response.json())
+  .then(email => {
+    console.log(email.subject)
+
+    let from = document.querySelector('#view-sender');
+    let to = document.querySelector('#view-recipient');
+    let subj = document.querySelector('#view-subject');
+    let time = document.querySelector('#view-timestamp');
+    let body = document.querySelector('#email-body')
+    
+    from.append(email.sender);
+    to.append(email.recipients);
+    subj.append(email.body)
+    time.innerHTML = email.timestamp
+    body.innerHTML = email.body
+
+    // Mark email as read
+    email.read = true
+
+  })
+
 }
+
+
+function reply_to_email() {
+  console.log("Replying to email")
+}
+
+
 
 
 function isRead(email) {
