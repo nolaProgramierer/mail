@@ -125,6 +125,7 @@ function get_email() {
 
       for (email in emails) {
 
+
         let messageBox = document.createElement("div");
         let timeStampHeader = document.createElement("span");
         let subjHeader = document.createElement("span");
@@ -154,6 +155,10 @@ function get_email() {
         }, false);
 
         document.querySelector("#emails-view").appendChild(messageBox);
+
+        if (emails[email].read === true) {
+          messageBox.style.backgroundColor = "gray";
+        }
 
         
 
@@ -294,7 +299,7 @@ function view_email(id) {
     body.innerHTML = email.body
 
     // Mark email as read
-    email.read = true
+    isRead(email.id)
 
   })
 
@@ -306,13 +311,15 @@ function reply_to_email() {
 }
 
 
-
-
-function isRead(email) {
-  if (email.read === true) {
-    messageBox.style.backgroundColor = "gray";
-    console.log(email.read)
-  }
+// Change read property in email database
+function isRead(id) {
+  fetch('/emails/' + id, {
+    method: 'PUT',
+    body: JSON.stringify({
+      read: true
+    })
+  })
+  console.log("Email id:" + id + "has been marked read.")
 }
 
 // Return id field of clicked button
