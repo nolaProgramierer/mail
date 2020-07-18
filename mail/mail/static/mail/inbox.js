@@ -157,7 +157,7 @@ function get_email(mailbox) {
 // Function to view individual email
 function view_email(id) {
 
-  // Clear other mailbox views, show individual email view
+  // Show individual email view
   document.querySelector('#email-view').style.display = 'block';
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
@@ -177,9 +177,15 @@ function view_email(id) {
         reply_to_email(email.id)
       });
 
-      // Add listener for archive button
+      // Add listener for archive button; change archive property, reload and fetch inbox emails
       document.querySelector('#email-archive').addEventListener('click', function () {
-        add_to_archive(email.id)
+        add_to_archive(email.id); load_mailbox('inbox'); get_email("inbox");
+      });
+
+      // Event listener for unarchive button
+      document.querySelector('#email-unarchive').addEventListener('click', function () {
+        unarchive(email.id); load_mailbox('inbox'); get_email("inbox");
+
       });
 
       let from = document.querySelector('#view-sender');
@@ -188,13 +194,12 @@ function view_email(id) {
       let time = document.querySelector('#view-timestamp');
       let body = document.querySelector('#email-body');
 
-
       // Add data to form
       from.innerHTML = email.sender
       to.innerHTML = email.recipients
       subj.innerHTML = email.subject
       time.innerHTML = email.timestamp;
-      body.innerHTML = email.body
+      body.innerHTML = email.body;
 
       // All emails viewed marked as read
       isRead(email.id);     
@@ -252,12 +257,22 @@ function show_compose_view() {
 }
 
 
-// Change archive property on email object
+// Change archive property on email object and load user inbox
 function add_to_archive(id) {
   fetch('/emails/' + id, {
     method: 'PUT',
     body: JSON.stringify({
       archived: true
+    })
+  })
+}
+
+// Change archive property to false
+function unarchive(id) {
+  fetch('/emails/' + id, {
+    method: 'PUT',
+    body: JSON.stringify({
+      archived: false
     })
   })
 }
