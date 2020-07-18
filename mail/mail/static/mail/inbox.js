@@ -145,9 +145,9 @@ function get_email(mailbox) {
         let email_id = emails[email].id
 
 
-        timeStampHeader.append(timestamp);
-        subjHeader.append(subj);
-        senderHeader.append(sender);
+        timeStampHeader.innerHTML = timestamp;
+        subjHeader.innerHTML = subj;
+        senderHeader.innerHTML = sender;
 
         messageBox.appendChild(senderHeader);
         messageBox.appendChild(subjHeader);
@@ -335,14 +335,21 @@ function view_email(id) {
 
 function reply_to_email(id) {
 
+  // Show compose view and hide other views
+  document.querySelector('#email-view').style.display = 'none';
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'block';
+
   fetch('emails/' + id)
     .then(response => response.json())
     .then(email => {
 
       // Populate forms with values from viewed email
       let to = email.recipients;
+      let from = email.sender
       let subj = email.subject;
       let body = email.body;
+      let timestamp = email.timestamp;
 
       let to_field = document.querySelector('#compose-recipients');
       let subj_field = document.querySelector('#compose-subject');
@@ -360,20 +367,12 @@ function reply_to_email(id) {
       }
 
       // Add reply header to body of reply email
-      reply_body = "On " + email.timestamp + " " + email.sender + " wrote: " + body
+      let reply_body = "On " + timestamp + ", " + from + " wrote: \n" + body
 
       // Add values to form
       to_field.value = to;
       body_field.innerHTML = reply_body;
-
-
     })
-
-  // Show compose view and hide other views
-  document.querySelector('#email-view').style.display = 'none';
-  document.querySelector('#emails-view').style.display = 'none';
-  document.querySelector('#compose-view').style.display = 'block';
-
 
 }
 
