@@ -19,8 +19,6 @@ document.addEventListener('DOMContentLoaded', function () {
   );
 
 
-
-
   // Submit email form
   document.querySelector("#compose-form").onsubmit = submit_email;
 
@@ -176,58 +174,6 @@ function get_email(mailbox) {
 
 
 
-// View archive mail
-function view_archive_mail() {
-
-  // Clear other mailbox views, show individual email view
-  document.querySelector('#email-view').style.display = 'block';
-  document.querySelector('#emails-view').style.display = 'none';
-  document.querySelector('#compose-view').style.display = 'none';
-
-  fetch("emails/archived")
-    .then(response => response.json())
-    .then(emails => {
-
-      for (email in emails) {
-
-
-        let messageBox = document.createElement("div");
-        let timeStampHeader = document.createElement("span");
-        let subjHeader = document.createElement("span");
-        let senderHeader = document.createElement("span")
-
-        messageBox.setAttribute("class", "message-box");
-        timeStampHeader.setAttribute("class", "time-stamp-header");
-        subjHeader.setAttribute("class", "body-header");
-        senderHeader.setAttribute("class", "sender-header");
-
-        timestamp = emails[email].timestamp
-        subj = emails[email].subject
-        sender = emails[email].sender
-
-
-        timeStampHeader.append(timestamp);
-        subjHeader.append(subj);
-        senderHeader.append(sender);
-
-        messageBox.appendChild(senderHeader);
-        messageBox.appendChild(subjHeader);
-        messageBox.appendChild(timeStampHeader);
-
-
-
-        document.querySelector("#emails-view").appendChild(messageBox);
-
-
-        console.log("Email id is:" + emails[email].id);
-        btnId
-
-
-
-      }
-    })
-  event.preventDefault();
-}
 
 
 // Function to view individual email
