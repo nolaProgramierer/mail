@@ -6,6 +6,9 @@ document.addEventListener('DOMContentLoaded', function () {
   document.querySelector('#archived').addEventListener('click', () => load_mailbox('archive'));
   document.querySelector('#compose').addEventListener('click', compose_email);
 
+  // Listener for reply button on email view
+  document.querySelector('#email-reply').addEventListener('click', reply_to_email);
+
   // Set eventListener for all buttons to return button id
 
   const buttons = document.querySelectorAll("button");
@@ -21,7 +24,6 @@ document.addEventListener('DOMContentLoaded', function () {
   // Submit email form
   document.querySelector("#compose-form").onsubmit = submit_email
 
-
   // Listener for inbox button click
   document.querySelector('#inbox').addEventListener('click', () => get_email());
 
@@ -30,8 +32,6 @@ document.addEventListener('DOMContentLoaded', function () {
 
   // Listener for archive button click
   document.querySelector('#archived').addEventListener('click', () => view_archive_mail());
-
-
 
   // By default, load the inbox
   load_mailbox('inbox');
@@ -67,8 +67,8 @@ function compose_reply() {
   //document.querySelector('#compose-view').style.display = 'block';
 
   document.querySelector('#compose-recipients').value = //...
-    document.querySelector('#compose-subject').value = // 'Re plus compose_email
-    document.querySelector('#compose-body').value = '';
+  document.querySelector('#compose-subject').value = // 'Re plus compose_email
+  document.querySelector('#compose-body').value = '';
 }
 
 
@@ -150,9 +150,11 @@ function get_email() {
         messageBox.appendChild(subjHeader);
         messageBox.appendChild(timeStampHeader);
 
+
+        // Listener for each email entry to show in individual view
         messageBox.addEventListener('click', () => {
           view_email(email_id);
-        }, false);
+        });
 
         document.querySelector("#emails-view").appendChild(messageBox);
 
@@ -160,13 +162,10 @@ function get_email() {
           messageBox.style.backgroundColor = "gray";
         }
 
-        
-
-        console.log("Email id is:" + emails[email].id);
-
 
       }
     })
+    event.preventDefault();
 
 }
 
@@ -223,7 +222,12 @@ function view_sent_mail() {
 // View archive mail
 function view_archive_mail() {
 
-  fetch("emails/archived")
+  // Clear other mailbox views, show individual email view
+  document.querySelector('#email-view').style.display = 'block';
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'none';
+
+  fetch("emails/archive")
     .then(response => response.json())
     .then(emails => {
 
@@ -271,6 +275,7 @@ function view_archive_mail() {
 
 // Function to view individual email
 function view_email(id) {
+
   // Clear other mailbox views, show individual email view
   document.querySelector('#email-view').style.display = 'block';
   document.querySelector('#emails-view').style.display = 'none';
@@ -284,30 +289,93 @@ function view_email(id) {
   fetch('/emails/' + id)
   .then(response => response.json())
   .then(email => {
-    console.log(email.subject)
+
+    // Add listener for reply button
+    document.querySelector('#email-reply').addEventListener('click', function () {
+      // Go to compose form with properties of this email
+    reply_to_email(email.id)
+    });
+
+    // Add listener for archive button
+    document.querySelector('#email-archive').addEventListener('click', function () {
+      add_to_archive(email.id)
+    });
 
     let from = document.querySelector('#view-sender');
     let to = document.querySelector('#view-recipient');
     let subj = document.querySelector('#view-subject');
     let time = document.querySelector('#view-timestamp');
-    let body = document.querySelector('#email-body')
-    
+    let body = document.querySelector('#email-body');
+
+
+    // Add data to form
     from.append(email.sender);
     to.append(email.recipients);
-    subj.append(email.body)
+    subj.append(email.subject)
     time.innerHTML = email.timestamp
     body.innerHTML = email.body
 
     // Mark email as read
     isRead(email.id)
+    
 
   })
 
 }
 
 
-function reply_to_email() {
-  console.log("Replying to email")
+function reply_to_email(id) {
+
+  fetch('emails/' + id)
+  .then(response => response.json())
+  .then(email => {
+
+    // Populate forms with values from viewed email
+    let to = email.recipients;
+    let subj = email.subject;
+    let body = email.body;
+
+    let to_field = document.querySelector('#compose-recipients');
+    let subj_field = document.querySelector('#compose-subject');
+    let body_field = document.querySelector('#compose-body');
+
+    // Determine if subject already contains 'Re:' prefix
+    let num = toString(subj).indexOf(":");
+    console.log("This is the index of 'subject" + num)
+    if (num === -1) {
+      subj_field.value = "Re: " + subj; 
+    }
+    else {
+      subj_field.value = subj;
+
+    }
+
+    // Add reply header to body of reply email
+    reply_body = "On " + email.timestamp + " " + email.sender + " wrote: " + body
+    
+    // Add values to form
+    to_field.value = to; 
+    body_field.innerHTML = reply_body;
+
+
+  })
+
+  // Show compose view and hide other views
+  document.querySelector('#email-view').style.display = 'none';
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'block';
+
+  
+}
+
+function add_to_archive(id) {
+  fetch('/emails/' + id), {
+    method: 'PUT',
+    body: JSON.stringify({
+      archived: true
+    })
+  }
+  console.log("Email id:" + id + " has been archived.")
 }
 
 
