@@ -9,30 +9,22 @@ document.addEventListener('DOMContentLoaded', function () {
   // Listener for reply button on email view
   document.querySelector('#email-reply').addEventListener('click', reply_to_email);
 
-  // Set eventListener for all buttons to return button id
+  // Listener for inbox button click
+  document.querySelector('#inbox').addEventListener('click', () => { get_email("inbox") });
 
-  const buttons = document.querySelectorAll("button");
-  buttons.forEach(function (btn) {
-    btn.addEventListener('click', btnId
-    )
-  }, false
-  );
+  // Listener for sent button click
+  document.querySelector('#sent').addEventListener('click', () => { get_email("sent") });
 
+  // Listener for archive button click
+  document.querySelector('#archived').addEventListener('click', () => { get_email("archive") });
 
   // Submit email form
   document.querySelector("#compose-form").onsubmit = submit_email;
 
-  // Listener for inbox button click
-  document.querySelector('#inbox').addEventListener('click', () => { get_email("inbox")});
-
-  // Listener for sent button click
-  document.querySelector('#sent').addEventListener('click', () => {get_email("sent")});
-
-  // Listener for archive button click
-  document.querySelector('#archived').addEventListener('click', () => { get_email("archive")});
-
   // By default, load the inbox
   load_mailbox('inbox');
+
+  // Get mail on inbox load
   get_email("inbox");
 
 
@@ -47,10 +39,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function compose_email() {
 
-  // Show compose view and hide other views
-  document.querySelector('#email-view').style.display = 'none';
-  document.querySelector('#emails-view').style.display = 'none';
-  document.querySelector('#compose-view').style.display = 'block';
+  show_compose_view();
 
   // Clear out composition fields
   document.querySelector('#compose-recipients').value = '';
@@ -121,11 +110,7 @@ function get_email(mailbox) {
     .then(response => response.json())
     .then(emails => {
 
-      console.log(emails);
-
       for (email in emails) {
-
-
 
         let messageBox = document.createElement("div");
         let timeStampHeader = document.createElement("span");
@@ -160,20 +145,13 @@ function get_email(mailbox) {
         document.querySelector("#emails-view").appendChild(messageBox);
 
         if (emails[email].read === true) {
-          messageBox.style.backgroundColor = "gray";
+          messageBox.style.backgroundColor = "gainsboro";
         }
-
-
       }
     })
   event.preventDefault();
 
 }
-
-
-
-
-
 
 
 // Function to view individual email
@@ -218,10 +196,8 @@ function view_email(id) {
       time.innerHTML = email.timestamp;
       body.innerHTML = email.body
 
-      // Mark email as read
-      isRead(email.id)
-
-
+      // All emails viewed marked as read
+      isRead(email.id);     
     })
 
 }
@@ -229,10 +205,7 @@ function view_email(id) {
 
 function reply_to_email(id) {
 
-  // Show compose view and hide other views
-  document.querySelector('#email-view').style.display = 'none';
-  document.querySelector('#emails-view').style.display = 'none';
-  document.querySelector('#compose-view').style.display = 'block';
+  show_compose_view();
 
   fetch('emails/' + id)
     .then(response => response.json())
@@ -270,6 +243,16 @@ function reply_to_email(id) {
 
 }
 
+
+// Show compose view and hide other views
+function show_compose_view() {  
+  document.querySelector('#email-view').style.display = 'none';
+  document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#compose-view').style.display = 'block';
+}
+
+
+// Change archive property on email object
 function add_to_archive(id) {
   fetch('/emails/' + id, {
     method: 'PUT',
@@ -277,7 +260,6 @@ function add_to_archive(id) {
       archived: true
     })
   })
-  console.log("Email id:" + id + " has been archived.")
 }
 
 
@@ -289,12 +271,6 @@ function isRead(id) {
       read: true
     })
   })
-  console.log("Email id:" + id + "has been marked read.")
-}
-
-// Return id field of clicked button
-function btnId() {
-  console.log("This button's id is:" + this.id);
 }
 
 
