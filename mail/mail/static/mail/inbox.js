@@ -311,16 +311,16 @@ function view_email(id) {
       });
 
       let from = document.querySelector('#view-sender');
-      let to = document.querySelector('#view-recipient');
+      let to = document.querySelector('#view-recipients');
       let subj = document.querySelector('#view-subject');
       let time = document.querySelector('#view-timestamp');
       let body = document.querySelector('#email-body');
 
 
       // Add data to form
-      from.innerHTML = "From: " + email.sender
-      to.innerHTML = "To: " + email.recipients
-      subj.innerHTML = "Subject: " + email.subject
+      from.innerHTML = email.sender
+      to.innerHTML = email.recipients
+      subj.innerHTML = email.subject
       time.innerHTML = email.timestamp;
       body.innerHTML = email.body
 

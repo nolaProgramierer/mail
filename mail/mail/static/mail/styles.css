@@ -24,3 +24,9 @@ textarea {
     position: absolute;
     left: 25%;
 }
+#email-view {
+    font-weight: bold;
+}
+#email-view span, #email-body {
+    font-weight: normal;
+}
