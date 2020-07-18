@@ -47,18 +47,6 @@ function compose_email() {
   document.querySelector('#compose-body').value = '';
 }
 
-function compose_reply() {
-  compose_email();
-
-  //document.querySelector('#emails-view').style.display = 'none';
-  //document.querySelector('#compose-view').style.display = 'block';
-
-  document.querySelector('#compose-recipients').value = //...
-    document.querySelector('#compose-subject').value = // 'Re plus compose_email
-    document.querySelector('#compose-body').value = '';
-}
-
-
 
 function load_mailbox(mailbox) {
 
@@ -70,6 +58,7 @@ function load_mailbox(mailbox) {
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
 }
+
 
 // Function to retrieve form values, POST them,
 // receive response and load "sent" mailbox
@@ -92,15 +81,8 @@ function submit_email() {
       console.log(result)
     })
 
-  // Flush the input fields
-  recipients.value = "";
-  subject.value = "";
-  body.value = "";
-
-  load_mailbox("sent")
-  view_sent_mail()
-
-  event.preventDefault();
+  load_mailbox("sent");
+  get_email("sent");
 
 }
 
@@ -177,14 +159,14 @@ function view_email(id) {
         reply_to_email(email.id)
       });
 
-      // Add listener for archive button; change archive property, reload and fetch inbox emails
+      // Add listener for archive button; change archive property, reloads inbox page.
       document.querySelector('#email-archive').addEventListener('click', function () {
-        add_to_archive(email.id); load_mailbox('inbox'); get_email("inbox");
+        add_to_archive(email.id); location.reload();
       });
 
-      // Event listener for unarchive button
+      // Event listener for unarchive button, unarchives archived email, reloads inbox page.
       document.querySelector('#email-unarchive').addEventListener('click', function () {
-        unarchive(email.id); load_mailbox('inbox'); get_email("inbox");
+        unarchive(email.id); location.reload();
       });
 
       // Display appropriate buttons for archived or unarchived email
@@ -227,8 +209,8 @@ function reply_to_email(id) {
     .then(email => {
 
       // Populate forms with values from viewed email
-      let to = email.recipients;
-      let from = email.sender
+      let to = email.sender;
+      let from_body = email.sender
       let subj = email.subject;
       let body = email.body;
       let timestamp = email.timestamp;
@@ -248,7 +230,7 @@ function reply_to_email(id) {
       }
 
       // Add reply header to body of reply email
-      let reply_body = "On " + timestamp + ", " + from + " wrote: \n" + body
+      let reply_body = "On " + timestamp + ", " + from_body + " wrote: \n" + body
 
       // Add values to form
       to_field.value = to;
