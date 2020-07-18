@@ -25,13 +25,13 @@ document.addEventListener('DOMContentLoaded', function () {
   document.querySelector("#compose-form").onsubmit = submit_email;
 
   // Listener for inbox button click
-  document.querySelector('#inbox').addEventListener('click', () => { get_email("inbox") });
+  document.querySelector('#inbox').addEventListener('click', () => { get_email("inbox")});
 
   // Listener for sent button click
-  document.querySelector('#sent').addEventListener('click', () => view_sent_mail());
+  document.querySelector('#sent').addEventListener('click', () => {get_email("sent")});
 
   // Listener for archive button click
-  document.querySelector('#archived').addEventListener('click', () => { get_email("archive") });
+  document.querySelector('#archived').addEventListener('click', () => { get_email("archive")});
 
   // By default, load the inbox
   load_mailbox('inbox');
@@ -173,59 +173,7 @@ function get_email(mailbox) {
 }
 
 
-// View sent mail
-function view_sent_mail() {
 
-  fetch("emails/sent")
-    .then(response => response.json())
-    .then(emails => {
-
-      for (email in emails) {
-
-
-        let messageBox = document.createElement("div");
-        let timeStampHeader = document.createElement("span");
-        let subjHeader = document.createElement("span");
-        let senderHeader = document.createElement("span")
-
-        messageBox.setAttribute("class", "message-box");
-        timeStampHeader.setAttribute("class", "time-stamp-header");
-        subjHeader.setAttribute("class", "body-header");
-        senderHeader.setAttribute("class", "sender-header");
-
-        timestamp = emails[email].timestamp
-        subj = emails[email].subject
-        sender = emails[email].sender
-        id = emails[email].id
-
-
-        timeStampHeader.append(timestamp);
-        subjHeader.append(subj);
-        senderHeader.append(sender);
-
-        messageBox.appendChild(senderHeader);
-        messageBox.appendChild(subjHeader);
-        messageBox.appendChild(timeStampHeader);
-
-        // Listener for each email entry to show in individual view
-        messageBox.addEventListener('click', () => {
-          view_email(id);
-        });
-
-
-
-
-        document.querySelector("#emails-view").appendChild(messageBox);
-
-
-        btnId
-
-
-
-      }
-    })
-  event.preventDefault();
-}
 
 
 // View archive mail
