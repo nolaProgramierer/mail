@@ -185,8 +185,18 @@ function view_email(id) {
       // Event listener for unarchive button
       document.querySelector('#email-unarchive').addEventListener('click', function () {
         unarchive(email.id); load_mailbox('inbox'); get_email("inbox");
-
       });
+
+      // Display appropriate buttons for archived or unarchived email
+      if (email.archived === true) {
+        document.querySelector('#email-archive').style.visibility = "hidden";
+        document.querySelector('#email-unarchive').style.visibility = "visible";
+      }
+      else {
+        document.querySelector('#email-archive').style.visibility = "visible";
+        document.querySelector('#email-unarchive').style.visibility = "hidden";
+      }
+
 
       let from = document.querySelector('#view-sender');
       let to = document.querySelector('#view-recipients');
@@ -229,7 +239,6 @@ function reply_to_email(id) {
 
       // Determine if subject already contains 'Re:' prefix
       let num = toString(subj).indexOf(":");
-      console.log("This is the index of 'subject" + num)
       if (num === -1) {
         subj_field.value = "Re: " + subj;
       }
