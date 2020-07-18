@@ -25,17 +25,17 @@ document.addEventListener('DOMContentLoaded', function () {
   document.querySelector("#compose-form").onsubmit = submit_email
 
   // Listener for inbox button click
-  document.querySelector('#inbox').addEventListener('click', () => get_email());
+  document.querySelector('#inbox').addEventListener('click', () => {get_email("inbox")});
 
   // Listener for sent button click
   document.querySelector('#sent').addEventListener('click', () => view_sent_mail());
 
   // Listener for archive button click
-  document.querySelector('#archived').addEventListener('click', () => view_archive_mail());
+  document.querySelector('#archived').addEventListener('click', () => {get_email("archive")});
 
   // By default, load the inbox
   load_mailbox('inbox');
-  get_email();
+  get_email("inbox");
 
 
 });
@@ -118,12 +118,15 @@ function submit_email() {
 }
 
 
-function get_email() {
-  fetch("emails/inbox")
+function get_email(mailbox) {
+  fetch("emails/" + mailbox)
     .then(response => response.json())
     .then(emails => {
 
+      console.log(emails);
+
       for (email in emails) {
+
 
 
         let messageBox = document.createElement("div");
@@ -204,6 +207,12 @@ function view_sent_mail() {
         messageBox.appendChild(subjHeader);
         messageBox.appendChild(timeStampHeader);
 
+        // Listener for each email entry to show in individual view
+        messageBox.addEventListener('click', () => {
+          view_email(id);
+        });
+
+
 
 
         document.querySelector("#emails-view").appendChild(messageBox);
@@ -227,7 +236,7 @@ function view_archive_mail() {
   document.querySelector('#emails-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
 
-  fetch("emails/archive")
+  fetch("emails/archived")
     .then(response => response.json())
     .then(emails => {
 
@@ -311,8 +320,8 @@ function view_email(id) {
     // Add data to form
     from.append(email.sender);
     to.append(email.recipients);
-    subj.append(email.subject)
-    time.innerHTML = email.timestamp
+    subj.append(email.subject + email.archived);
+    time.innerHTML = email.timestamp;
     body.innerHTML = email.body
 
     // Mark email as read
@@ -369,12 +378,12 @@ function reply_to_email(id) {
 }
 
 function add_to_archive(id) {
-  fetch('/emails/' + id), {
+  fetch('/emails/' + id, {
     method: 'PUT',
     body: JSON.stringify({
       archived: true
     })
-  }
+  })
   console.log("Email id:" + id + " has been archived.")
 }
 
