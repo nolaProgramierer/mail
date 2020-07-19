@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
   document.querySelector('#archived').addEventListener('click', () => { get_email("archive") });
 
   // Submit email form
-  document.querySelector("#compose-form").onsubmit = submit_email;
+  document.querySelector("#compose-form").addEventListener('submit', () => { submit_email() });
 
   // By default, load the inbox
   load_mailbox('inbox');
@@ -76,11 +76,11 @@ function submit_email() {
       body: body
     })
   })
-    .then(response => response.json())
-    .then(result => {
-      console.log(result)
-    })
-
+  .then(response => response.json())
+  .then(result => {
+    console.log(result)
+  })
+  
   load_mailbox("sent");
   get_email("sent");
 
@@ -181,7 +181,7 @@ function view_email(id) {
 
 
       let from = document.querySelector('#view-sender');
-      let to = document.querySelector('#view-recipients');
+      let to = document.querySelector('#view-recipients')
       let subj = document.querySelector('#view-subject');
       let time = document.querySelector('#view-timestamp');
       let body = document.querySelector('#email-body');
